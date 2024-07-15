@@ -59,11 +59,12 @@ function vowelBonusScorer(word) {
    }
 
 
-function scrabbleScorer(word, structure = newPointStructure) { 
+function scrabbleScorer(word, oldPointStructure = newPointStructure) { 
       let score = 0;
+      word = word.toLowerCase();
       for (let i = 0; i < word.length; i++) 
       {
-         score += Number(structure[word[i]]);
+         score += Number(oldPointStructure[word[i]]);
       }
       return score;
    }
@@ -93,9 +94,29 @@ function scorerPrompt() {
    for (let i = 0; i < scoringAlgorithms.length; i++) {
       console.log(`${i} - ${scoringAlgorithms[i].name}: ${scoringAlgorithms[i].description}`)
    }
-   let questionScore = Number(input.question(`\nEnter 0, 1, or 2: `));
-   console.log(`Score for '${scrabbleIntro}': ${scoringAlgorithms[questionScore].scorerFunction(scrabbleIntro)}`)
+   let wordScorer = Number(input.question(`\nEnter 0, 1, or 2: `));
+   while(Number(wordScorer) < 0 ||
+         Number(wordScorer) >= 3 ||
+         isNaN(wordScorer)) {
+            wordScorer = input.question('Invalid number, please choose between 0-2: ');
+         }
+   console.log(`Score for '${scrabbleIntro}': ${scoringAlgorithms[wordScorer].scorerFunction(scrabbleIntro)}`)
 };
+
+function playAgain(){
+   let askPlayAgain;
+   while(true){
+      askPlayAgain = input.question('Would you like to play again? Y/N ');
+      if(askPlayAgain == "N") {
+         console.log('Thank you for playing!');
+         break;
+      }
+      else if(askPlayAgain == "Y") {
+         runProgram();
+         break;
+      }
+   }
+}
 
 function transform(oldPointStructure) {
    let newStructure = {};
@@ -110,11 +131,10 @@ function transform(oldPointStructure) {
 let newPointStructure = transform(oldPointStructure);
 
 
-
 function runProgram() {
    initialPrompt();
    scorerPrompt();
-   
+   playAgain();
 }
 
 
